@@ -1,6 +1,5 @@
 package mini.tx.mk4;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -12,15 +11,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ToggleButton;
 
-
 public class MainActivity extends AppCompatActivity {
-    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         ToggleButton wifiToggleButton = findViewById(R.id.wifiToggleButton);
         wifiToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -35,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void wifiConnect(int toggleStatus) {
-        Log.d("myTag", "Connect button toggled on");
+        Context context = this;
+
+        Log.d("myTag", "Connect button pressed");
 
 // Connect to wifi
         WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
@@ -58,13 +56,21 @@ public class MainActivity extends AppCompatActivity {
                         connectivityManager.bindProcessToNetwork(network);
                     }
                 };
-        connectivityManager.requestNetwork(request, networkCallback);
 
-
-        if (toggleStatus == 0) {
-            connectivityManager.unregisterNetworkCallback(networkCallback);
-            Log.d("myTag", "Connect button toggled off");
+        if (toggleStatus == 1) {
+            connectivityManager.requestNetwork(request, networkCallback);
+            Log.d("myTag", "Connect button toggled on");
         }
 
+        if (toggleStatus == 0) {
+            Log.d("myTag", "Connect button toggled off");
+             try {
+                connectivityManager.unregisterNetworkCallback(networkCallback);
+            Log.d("myTag", "unregister network called");
+            }
+             catch (Exception exception) {
+                 Log.d("could not unregister network callback", String.valueOf(exception));
+            }
+        }
     }
 }
