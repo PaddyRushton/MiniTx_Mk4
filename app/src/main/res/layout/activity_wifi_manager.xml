@@ -4,18 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mini.tx.mk4.MainActivity">
+    tools:context="mini.tx.mk4.WifiManagerActivity">
 
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:onClick="wifiSettings"
-        android:text="@string/wifi_settings_button"
+    <ToggleButton
+        android:id="@+id/wifiToggleButton"
+        android:layout_width="152dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="260dp"
+        android:checked="false"
+        android:text="@string/wifi_toggle_button_name"
+        android:textOff="@string/wifi_toggle_off"
+        android:textOn="@string/wifi_toggle_on"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
