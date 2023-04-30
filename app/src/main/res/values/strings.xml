@@ -4,4 +4,6 @@
     <string name="wifi_toggle_off">Connect</string>
     <string name="wifi_toggle_on">Disconnect</string>
     <string name="wifi_toggle_button_name">WiFiToggleButton</string>
+    <string name="ssid">minirx</string>
+    <string name="key">123456789</string>
 </resources>

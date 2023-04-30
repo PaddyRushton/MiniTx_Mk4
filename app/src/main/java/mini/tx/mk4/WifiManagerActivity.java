@@ -4,15 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.NetworkRequest;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSpecifier;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class WifiManagerActivity extends AppCompatActivity {
+    Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,41 +38,39 @@ public class WifiManagerActivity extends AppCompatActivity {
     }
 
     public void wifiConnect(int toggleStatus) {
-        Context context = this;
-
         Log.d("myTag", "Connect button pressed");
 
 // Connect to wifi
-        WifiNetworkSpecifier miniRxWiFi = new WifiNetworkSpecifier.Builder()
+        WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
                 .setSsid("minirx")
                 .setWpa2Passphrase("123456789")
                 .build();
 
         NetworkRequest request = new NetworkRequest.Builder()
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI) // we want WiFi
-                .setNetworkSpecifier(miniRxWiFi) // we want _our_ network
+                .setNetworkSpecifier(specifier) // we want _our_ network
                 .build();
 
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         ConnectivityManager.NetworkCallback networkCallback = new
                 ConnectivityManager.NetworkCallback() {
                     @Override
-                    public void onAvailable(Network network) {
-                        super.onAvailable(network);
-                        Log.d("myTag", "onAvailable:" + network);
-                        connectivityManager.bindProcessToNetwork(network);
+                    public void onAvailable(Network miniRxNetwork) {
+                        super.onAvailable(miniRxNetwork);
+                        Log.d("myTag", "onAvailable:" + miniRxNetwork);
+                        connectivityManager.bindProcessToNetwork(miniRxNetwork);
+                        LinkProperties linkProperties = connectivityManager.getLinkProperties(miniRxNetwork);
+                        Log.d("myTag", "Link Properties: " + linkProperties);
 
                     }
                 };
 
-
-
         if (toggleStatus == 1) {
-            Log.d("myTag", "Connect button toggled on");
             connectivityManager.requestNetwork(request, networkCallback);
-            Log.d("myTag", "request network called");
+            Log.d("myTag", "Connect button toggled on");
+        }
 
-        } else if (toggleStatus == 0) {
+        if (toggleStatus == 0) {
             Log.d("myTag", "Connect button toggled off");
             try {
                 connectivityManager.unregisterNetworkCallback(networkCallback);
@@ -75,5 +79,28 @@ public class WifiManagerActivity extends AppCompatActivity {
                 Log.d("could not unregister network callback", String.valueOf(exception));
             }
         }
+
     }
+
+/*
+    //deprecated unfortunately but I can't figure out how to do it properly for Android API 33
+    //public void wifiCheck() {
+        // on below line we are creating a variable for connectivity manager and initializing it.
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // on below line we are getting network info to get wifi network info.
+        NetworkInfo wifiConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        // on below line displaying toast message when wi-fi is connected when wi-fi is disconnected
+        if (wifiConnection.isConnected()) {
+
+            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            int ipAddr = wifiInfo.getIpAddress();
+            Toast.makeText(WifiManagerActivity.this, "Wi-Fi is connected... AP IP Address is:" + ipAddr, Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(WifiManagerActivity.this, "Wi-Fi is disconnected..", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+ */
 }
