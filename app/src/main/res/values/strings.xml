@@ -3,7 +3,7 @@
     <string name="wifi_settings_button">Wifi Settings</string>
     <string name="wifi_toggle_off">Connect</string>
     <string name="wifi_toggle_on">Disconnect</string>
-    <string name="wifi_toggle_button_name">WiFiToggleButton</string>
+    <string name="scan_button_text">Scan Wi-Fi Networks</string>
     <string name="ssid">minirx</string>
     <string name="key">123456789</string>
 </resources>

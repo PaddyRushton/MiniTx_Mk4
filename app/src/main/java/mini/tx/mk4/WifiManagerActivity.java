@@ -1,84 +1,163 @@
 package mini.tx.mk4;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.NetworkRequest;
-import android.net.wifi.WifiInfo;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSpecifier;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+import android.os.Handler;
+import android.provider.Settings;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
 
 public class WifiManagerActivity extends AppCompatActivity {
-    Context context = this;
+
+    private WifiManager wifiManager;
+    private TextView wifiStatusTextView;
+    private Button scanButton;
+    private String scanButtonText = "Press to Rescan";
+
+    private Handler handler;
+    private Runnable revertButtonTask;
+
+    private boolean openWifiSettingsOnNextPress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_manager);
+        wifiStatusTextView = findViewById(R.id.wifiStatusTextView);
+        scanButton = findViewById(R.id.scanButton);
+        scanButton.setText(scanButtonText);
 
-        ToggleButton wifiToggleButton = findViewById(R.id.wifiToggleButton);
-        wifiToggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                // The toggle is enabled
-                wifiConnect(1);
-            } else {
-                // The toggle is disabled
-                wifiConnect(0);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (openWifiSettingsOnNextPress) {
+                    openWifiSettings();
+                    openWifiSettingsOnNextPress = false;
+                } else {
+                    scanWifiNetworks();
+                }
             }
         });
+
+        handler = new Handler();
+        revertButtonTask = new Runnable() {
+            @Override
+            public void run() {
+                scanButtonText = "Press to Rescan";
+                scanButton.setText(scanButtonText);
+            }
+        };
     }
 
-    public void wifiConnect(int toggleStatus) {
-        Log.d("myTag", "Connect button pressed");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(wifiScanReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        scanWifiNetworks();
+    }
 
-// Connect to wifi
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(wifiScanReceiver);
+    }
+
+    private void scanWifiNetworks() {
+        boolean success = wifiManager.startScan();
+        if (success) {
+            scanButtonText = "Scanning Wi-Fi networks...";
+            scanButton.setText(scanButtonText);
+            handler.removeCallbacks(revertButtonTask); // Remove any pending callbacks
+            // Delay in milliseconds
+            int REVERT_DELAY = 1000;
+            handler.postDelayed(revertButtonTask, REVERT_DELAY);
+        } else {
+            scanButtonText = "Press again to force refresh.";
+            scanButton.setText(scanButtonText);
+            openWifiSettingsOnNextPress = true;
+        }
+    }
+
+    // Open Android OS WiFi Settings to force a cheeky refresh..
+    private void openWifiSettings() {
+        Intent wifiIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+        startActivity(wifiIntent);
+    }
+
+    private void connectToMinirxNetwork(String password) {
         WifiNetworkSpecifier specifier = new WifiNetworkSpecifier.Builder()
                 .setSsid("minirx")
-                .setWpa2Passphrase("123456789")
+                .setWpa2Passphrase(password)
                 .build();
 
-        NetworkRequest request = new NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI) // we want WiFi
-                .setNetworkSpecifier(specifier) // we want _our_ network
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .setNetworkSpecifier(specifier)
                 .build();
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        ConnectivityManager.NetworkCallback networkCallback = new
-                ConnectivityManager.NetworkCallback() {
-                    @Override
-                    public void onAvailable(Network miniRxNetwork) {
-                        super.onAvailable(miniRxNetwork);
-                        Log.d("myTag", "onAvailable:" + miniRxNetwork);
-                        connectivityManager.bindProcessToNetwork(miniRxNetwork);
-                        LinkProperties linkProperties = connectivityManager.getLinkProperties(miniRxNetwork);
-                        Log.d("myTag", "Link Properties: " + linkProperties);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-                    }
-                };
+        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                super.onAvailable(network);
+                // Network is available, do your work here
+                wifiStatusTextView.setText("Wi-Fi network 'minirx' connected!");
+            }
 
-        if (toggleStatus == 1) {
-            connectivityManager.requestNetwork(request, networkCallback);
-            Log.d("myTag", "Connect button toggled on");
-        }
+            @Override
+            public void onUnavailable() {
+                super.onUnavailable();
+                // Network is unavailable or connection failed
+                wifiStatusTextView.setText("Wi-Fi network 'minirx' not found");
+                // Unregister the network callback
+                connectivityManager.unregisterNetworkCallback(this);
+            }
+        };
 
-        if (toggleStatus == 0) {
-            Log.d("myTag", "Connect button toggled off");
-            try {
-                connectivityManager.unregisterNetworkCallback(networkCallback);
-                Log.d("myTag", "unregister network called");
-            } catch (Exception exception) {
-                Log.d("could not unregister network callback", String.valueOf(exception));
+        connectivityManager.requestNetwork(networkRequest, networkCallback);
+    }
+
+    private final BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            List<ScanResult> scanResults = wifiManager.getScanResults();
+            boolean minirxAvailable = false;
+
+            for (ScanResult scanResult : scanResults) {
+                if (scanResult.SSID.equals("minirx")) {
+                    minirxAvailable = true;
+                    break;
+                }
+            }
+
+            if (minirxAvailable) {
+                // Connect to minirx network
+                connectToMinirxNetwork("123456789");
+                wifiStatusTextView.setText("Wi-Fi network 'minirx' available!");
+
+
+
+            } else {
+                wifiStatusTextView.setText("Wi-Fi network 'minirx' not found.");
             }
         }
-
-    }
+    };
 }
