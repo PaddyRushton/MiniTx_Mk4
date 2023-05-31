@@ -81,26 +81,4 @@ public class WifiManagerActivity extends AppCompatActivity {
         }
 
     }
-
-/*
-    //deprecated unfortunately but I can't figure out how to do it properly for Android API 33
-    //public void wifiCheck() {
-        // on below line we are creating a variable for connectivity manager and initializing it.
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        // on below line we are getting network info to get wifi network info.
-        NetworkInfo wifiConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        // on below line displaying toast message when wi-fi is connected when wi-fi is disconnected
-        if (wifiConnection.isConnected()) {
-
-            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            int ipAddr = wifiInfo.getIpAddress();
-            Toast.makeText(WifiManagerActivity.this, "Wi-Fi is connected... AP IP Address is:" + ipAddr, Toast.LENGTH_SHORT).show();
-
-        } else {
-            Toast.makeText(WifiManagerActivity.this, "Wi-Fi is disconnected..", Toast.LENGTH_SHORT).show();
-        }
-
-    }
- */
 }
