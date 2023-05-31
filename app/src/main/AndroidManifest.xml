@@ -19,12 +19,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniTx_Mk4"
         tools:targetApi="33">
+
         <activity
             android:name=".WifiManagerActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Transparent"/>
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
