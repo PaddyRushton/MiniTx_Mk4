@@ -9,5 +9,14 @@
     <color name="white">#FFFFFFFF</color>
     <color name="backgroundPrimary">#FF000000</color>
 
+
+//For Neumorphism Style
+    <color name="text_color">#1E4175</color>
+    <color name="background_color">#ecf0f3</color>
+    <color name="highlight">#ffffff</color>
+    <color name="shadow_color">#d9dbde</color>
+
+
+
 </resources>
 

@@ -60,32 +60,41 @@ android:background="@color/backgroundPrimary">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:layout_weight="7.5"
+        android:layout_weight="7.6"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        >
+        android:paddingRight="20dp" >
 
         <Button
             android:id="@+id/button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
             android:onClick="wifiSettings"
-            android:text="@string/wifi_settings_button"/>
+            android:text="@string/wifi_settings_button"
+            android:background="@drawable/rounded_corner_button"
+            android:textAlignment="center" />
 
         <ToggleButton
-            android:id="@+id/ctrl_b4"
+            android:id="@+id/ctrl_b1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_button"
+            android:layout_marginBottom="10dp"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
-        <ToggleButton android:id="@+id/ctrl_b5"
+        <ToggleButton android:id="@+id/ctrl_b2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_button"
+            android:layout_marginBottom="10dp"/>
 
-        <ToggleButton android:id="@+id/ctrl_b6"
+        <ToggleButton android:id="@+id/ctrl_b3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_button"
+            android:layout_marginBottom="10dp"/>
+
 
     </LinearLayout>
 
