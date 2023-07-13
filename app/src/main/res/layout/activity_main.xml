@@ -35,13 +35,13 @@ android:background="@color/backgroundPrimary">
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_gravity="center"
-                android:background="@android:color/white" />
+                android:background="@color/colorSecondaryVariant" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@android:color/white" />
+                android:background="@color/colorSecondaryVariant" />
 
             <ImageView
                 android:id="@+id/leftStickTop"
@@ -65,15 +65,16 @@ android:background="@color/backgroundPrimary">
         android:paddingRight="20dp" >
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/connect_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="10dp"
-            android:onClick="wifiSettings"
-            android:text="@string/wifi_settings_button"
             android:background="@drawable/rounded_corner_button"
-            android:textAlignment="center" />
+            android:onClick="WifiConnectionManager"
+            android:text="Connect"
+            android:textAlignment="center"
+            android:textColor="@android:color/white" />
 
         <ToggleButton
             android:id="@+id/ctrl_b1"
@@ -115,13 +116,13 @@ android:background="@color/backgroundPrimary">
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_gravity="center"
-                android:background="@android:color/white" />
+                android:background="@color/colorSecondaryVariant" />
 
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="@android:color/white" />
+                android:background="@color/colorSecondaryVariant" />
 
             <ImageView
                 android:id="@+id/rightStickTop"

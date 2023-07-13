@@ -6,5 +6,6 @@
         android:width="100dp"
         android:height="100dp"/>
       <stroke android:width="6dip" android:color="@color/colorPrimary" />
+    <solid android:color="@color/colorPrimaryVariant" />
     <padding android:left="0dip" android:top="0dip" android:right="0dip" android:bottom="0dip" />
 </shape>

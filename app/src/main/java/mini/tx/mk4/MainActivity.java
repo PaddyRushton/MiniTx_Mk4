@@ -3,7 +3,6 @@ package mini.tx.mk4;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,14 +11,12 @@ import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import mini.tx.mk4.R;
-import mini.tx.mk4.UDPReceiveServer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -276,9 +273,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void wifiSettings(View view) {
-        Intent intent = new Intent(this, WifiManagerActivity.class);
-        startActivity(intent);
+    public void WifiConnectionManager(View view) {
+        WifiManagerActivity wifiConnector = new WifiManagerActivity(this);
+        wifiConnector.connectToWifi("minirx", "123456789");
+        android.widget.Button connect_button = findViewById(R.id.connect_button);
+        connect_button.setText (wifiConnector.ConnectionStatus);
     }
 
 
